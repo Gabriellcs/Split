@@ -1,37 +1,36 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const MySQLUserRepository = require('../repositories/MySQLUserRepository');
+const UserService = require('../services/UserService');
+const AuthService = require('../services/AuthService');
+const Response = require('../utils/responseHelper');
+const { isEmpty } = require('../utils/validator');
 
+const userRepo = new MySQLUserRepository();
+const userService = new UserService(userRepo);
+const authService = new AuthService(userRepo);
 
 const register = (req, res) => {
   const { email, password } = req.body;
-  console.log('📥 Dados recebidos para cadastro:', email, password); // <-- aqui
-  bcrypt.hash(password, 8, (err, hash) => {
-    if (err) return res.status(500).json({ message: 'Erro interno' });
-    User.createUser(email, hash, (err, result) => {
-      if (err) {
-        console.error(err); // <-- log do erro real
-        return res.status(500).json({ message: 'Erro ao criar usuário' });
-      }
-      res.status(201).json({ message: 'Usuário criado com sucesso!' });
-    });
+  userService.register(email, password, (err, result) => {
+    if (err) {
+      console.error('❌ ERRO NO REGISTER CONTROLLER:', err); // <----
+      return res.status(500).json({ message: 'Erro ao registrar usuário', error: err });
+    }
+    return res.status(201).json({ message: 'Usuário criado com sucesso!' });
   });
 };
 
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  User.findUserByEmail(email, (err, results) => {
-    if (err || results.length === 0) return res.status(401).json({ message: 'Credenciais inválidas' });
-    const user = results[0];
-    bcrypt.compare(password, user.password, (err, isMatch) => {
-      if (!isMatch) return res.status(401).json({ message: 'Senha incorreta' });
-      const token = jwt.sign({ id: user.id }, 'segredo123', { expiresIn: '1h' });
-      res.json({ message: 'Login bem-sucedido', token });
-    });
+  authService.login(email, password, (err, token, message) => {
+    if (err) {
+      console.error('❌ ERRO NO LOGIN CONTROLLER:', err); // <----
+      return res.status(500).json({ message: 'Erro interno no login', error: err });
+    }
+    if (!token) return res.status(401).json({ message });
+    return res.json({ message: 'Login bem-sucedido', data: { token } });
   });
 };
 
+
 module.exports = { register, login };
-
-

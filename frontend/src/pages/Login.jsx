@@ -7,22 +7,27 @@ export default function Login() {
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+const handleLogin = async (e) => {
+  e.preventDefault();
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
 
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      navigate('/home'); // redireciona para a página inicial
-    } else {
-      setMsg(data.message || 'Erro');
-    }
-  };
+  const data = await res.json();
+  console.log('Resposta da API:', data);
+
+  if (data.data && data.data.token) {
+    alert(data.message);
+    localStorage.setItem('token', data.data.token);
+    navigate('/home');
+  } else {
+    setMsg(data.message || 'Erro');
+  }
+};
+
+
 
   return (
     <div>

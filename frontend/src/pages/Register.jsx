@@ -18,6 +18,7 @@ export default function Register() {
     const data = await res.json();
     setMsg(data.message || 'Erro');
     if (data.message === 'Usuário criado com sucesso!') {
+      alert(data.message);
       navigate('/'); // volta para o login após cadastro
     }
   };
