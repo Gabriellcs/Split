@@ -1,13 +1,5 @@
-function success(res, message, data = null) {
-  return res.status(200).json({ message, data });
-}
-
-function created(res, message, data = null) {
-  return res.status(201).json({ message, data });
-}
-
-function error(res, message = 'Erro interno', code = 500) {
-  return res.status(code).json({ message });
-}
-
-module.exports = { success, created, error };
+module.exports = {
+  success: (res, data) => res.json({ success: true, data }),
+  created: (res, message = 'Criado com sucesso') => res.status(201).json({ success: true, message }),
+  error: (res, message = 'Erro interno do servidor', status = 500) => res.status(status).json({ success: false, message })
+};

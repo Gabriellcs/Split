@@ -1,13 +1,22 @@
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
-const authRoutes = require('./routes/auth');
+const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
+const authRoutes = require('./routes/auth');
+const groupRoutes = require('./routes/group');
 
-app.listen(3001, () => {
-  console.log('🚀 Servidor rodando na porta 3001');
+app.use('/api/auth', authRoutes);
+app.use('/api/groups', groupRoutes);
+
+const accountRoutes = require('./routes/account');
+app.use('/api/accounts', accountRoutes);
+
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

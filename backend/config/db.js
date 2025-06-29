@@ -7,7 +7,7 @@ function getConnection() {
     connection = mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      password: '2039',         // ajuste conforme seu banco
+      password: '2039',
       database: 'split_db'
     });
 
@@ -16,7 +16,7 @@ function getConnection() {
         console.error('Erro ao conectar no MySQL:', err);
         throw err;
       }
-      console.log('✅ MySQL conectado via Singleton');
+      console.log('MySQL conectado');
     });
   }
 

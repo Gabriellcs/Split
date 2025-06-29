@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import '../styles/Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,35 +17,37 @@ const handleLogin = async (e) => {
   });
 
   const data = await res.json();
-  console.log('Resposta da API:', data);
 
-  if (data.data && data.data.token) {
-    alert(data.message);
-    localStorage.setItem('token', data.data.token);
+  // 🧠 Verifica se token veio dentro de data.data.token
+  const token = data.token || (data.data && data.data.token);
+
+  if (token) {
+    localStorage.setItem('token', token);
     navigate('/home');
   } else {
-    setMsg(data.message || 'Erro');
+    setMsg(data.message || 'Erro no login');
   }
 };
 
 
-
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} className="login-form">
         <input
           type="email"
           placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        /><br />
+          required
+        />
         <input
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        /><br />
+          required
+        />
         <button type="submit">Entrar</button>
       </form>
       <p>{msg}</p>

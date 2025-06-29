@@ -1,0 +1,27 @@
+.create-account-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.create-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.create-account-form input,
+.create-account-form select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.members-selection {
+  margin-top: 10px;
+}
+
+.member-checkbox {
+  display: block;
+  margin-bottom: 6px;
+}

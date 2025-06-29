@@ -1,0 +1,81 @@
+.group-details-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  font-family: sans-serif;
+}
+
+.group-details-container h2 {
+  margin-bottom: 16px;
+  text-align: center;
+  color: #333;
+}
+
+.group-details-container p {
+  margin: 8px 0;
+  color: #444;
+}
+
+.group-details-container ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+
+.group-details-container ul li {
+  background: #f0f0f0;
+  margin: 6px 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.group-details-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.group-details-buttons button {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.group-details-buttons .btn-edit {
+  background-color: #28a745;
+  color: white;
+}
+
+.group-details-buttons .btn-edit:hover {
+  background-color: #218838;
+}
+
+.group-details-buttons .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.group-details-buttons .btn-danger:hover {
+  background-color: #b02a37;
+}
+
+.back-button {
+  margin-top: 16px;
+  text-align: center;
+  color: #f0f0f0;
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}

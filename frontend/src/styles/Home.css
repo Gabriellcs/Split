@@ -1,0 +1,33 @@
+.home-container {
+  max-width: 400px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.home-btn {
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.home-btn.blue {
+  background-color: #007bff;
+}
+
+.home-btn.green {
+  background-color: #28a745;
+}
+
+.home-btn:hover {
+  opacity: 0.9;
+}
