@@ -80,13 +80,17 @@ getMembersByGroupId(req, res) {
   });
 }
 
-getAccountsByGroupId = (req, res) => {
+getAccountsByGroupId(req, res) {
   const groupId = req.params.id;
-  console.log(`🔍 GET /${groupId}/accounts chamado`);
 
   const sql = `
-    SELECT a.*, 
-      GROUP_CONCAT(m.name SEPARATOR ', ') AS members
+    SELECT 
+      a.id,
+      a.name,
+      a.value,
+      a.due_date,
+      a.group_id,
+      IFNULL(GROUP_CONCAT(m.name SEPARATOR ', '), '') AS members
     FROM accounts a
     LEFT JOIN account_members am ON a.id = am.account_id
     LEFT JOIN members m ON am.member_id = m.id
@@ -100,11 +104,10 @@ getAccountsByGroupId = (req, res) => {
       return res.status(500).json({ message: 'Erro ao buscar contas' });
     }
 
+    console.log('📦 Contas com membros:', results);
     res.json({ data: results });
   });
-};
-
-
+}
 
 
 }

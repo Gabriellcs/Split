@@ -1,47 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/CreateGroup.css';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import '../styles/CreateGroup.css'; // Reaproveitando o estilo
 
 function CreateAccount() {
+  const { groupId } = useParams(); // Vindo da URL
   const navigate = useNavigate();
-  const [membros, setMembros] = useState([]);
+
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [selecionados, setSelecionados] = useState([]);
   const [msg, setMsg] = useState('');
 
-  // Carrega os membros do grupo temporário
-  useEffect(() => {
-    const grupoTemp = JSON.parse(localStorage.getItem('grupoTemp'));
-    if (grupoTemp?.membros) {
-      setMembros(grupoTemp.membros);
-    }
-  }, []);
-
-  // Envia a conta para o localStorage
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const novaConta = {
       name,
       value: parseFloat(value),
       due_date: dueDate,
-      members: selecionados
+      group_id: parseInt(groupId)
     };
 
-    const contasTemp = JSON.parse(localStorage.getItem('contasTemp')) || [];
-    contasTemp.push(novaConta);
-    localStorage.setItem('contasTemp', JSON.stringify(contasTemp));
+    try {
+      const res = await fetch('/api/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novaConta)
+      });
 
-    setMsg('Conta adicionada com sucesso!');
-    setTimeout(() => navigate('/groups/new'), 1000);
-  };
+      const data = await res.json();
+      setMsg(data.message || 'Conta adicionada com sucesso!');
 
-  const toggleMembro = (nome) => {
-    setSelecionados((prev) =>
-      prev.includes(nome) ? prev.filter(n => n !== nome) : [...prev, nome]
-    );
+      if (res.status === 201) {
+        setTimeout(() => navigate(`/groups/${groupId}`), 1000);
+      }
+    } catch (err) {
+      console.error('❌ Erro ao criar conta:', err);
+      setMsg('Erro ao criar conta');
+    }
   };
 
   return (
@@ -67,24 +63,6 @@ function CreateAccount() {
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
-
-        <div style={{ marginTop: '10px' }}>
-          <p><strong>Responsáveis:</strong></p>
-          {membros.length === 0 ? (
-            <p>Nenhum membro cadastrado.</p>
-          ) : (
-            membros.map((m, idx) => (
-              <label key={idx} style={{ display: 'block' }}>
-                <input
-                  type="checkbox"
-                  checked={selecionados.includes(m)}
-                  onChange={() => toggleMembro(m)}
-                />
-                {m}
-              </label>
-            ))
-          )}
-        </div>
 
         <button type="submit" style={{ marginTop: '15px' }}>Salvar Conta</button>
       </form>

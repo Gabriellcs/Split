@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../styles/GroupDetails.css';
+import '../styles/GroupDetails.css'; // vou criar o CSS aqui
 
 function GroupDetails() {
   const { id } = useParams();
@@ -11,14 +11,13 @@ function GroupDetails() {
   const [contas, setContas] = useState([]);
   const [erro, setErro] = useState('');
 
-  // Busca os dados do grupo
   useEffect(() => {
     const fetchGrupo = async () => {
       try {
         const resGrupo = await fetch(`/api/groups/${id}`);
         const dataGrupo = await resGrupo.json();
         setGrupo(dataGrupo.data || {});
-      } catch (err) {
+      } catch {
         setErro('Erro ao carregar grupo.');
       }
 
@@ -34,21 +33,19 @@ function GroupDetails() {
     fetchGrupo();
   }, [id]);
 
-  // Busca as contas do grupo
-useEffect(() => {
-  const fetchContas = async () => {
-    try {
-      const res = await fetch(`/api/groups/${id}/accounts`);
-      const data = await res.json();
-      console.log('📦 Contas recebidas:', data.data);
-      setContas(data.data || []);
-    } catch (err) {
-      console.error('Erro ao buscar contas:', err);
-    }
-  };
+  useEffect(() => {
+    const fetchContas = async () => {
+      try {
+        const res = await fetch(`/api/groups/${id}/accounts`);
+        const data = await res.json();
+        setContas(data.data || []);
+      } catch (err) {
+        console.error('Erro ao buscar contas:', err);
+      }
+    };
 
-  fetchContas();
-}, [id]);
+    fetchContas();
+  }, [id]);
 
   if (erro) return <p>{erro}</p>;
   if (!grupo) return <p>Carregando grupo...</p>;
@@ -72,12 +69,49 @@ useEffect(() => {
         {contas.length === 0 ? (
           <p>Nenhuma conta cadastrada.</p>
         ) : (
-          <ul>
+          <ul className="contas-list">
             {contas.map((conta) => (
-              <li key={conta.id} style={{ marginBottom: '10px' }}>
-                <strong>{conta.name}</strong> — R${conta.value} — vence em {conta.due_date?.slice(0, 10)}
-                <br />
-                <small>Responsáveis: {conta.members || 'Ninguém'}</small>
+              <li key={conta.id} className="conta-item">
+                <div className="conta-info">
+                  <strong>{conta.name}</strong>
+                  <div className="conta-actions">
+                    <button
+                      className="icon-btn edit-btn"
+                      title="Editar conta"
+                      onClick={() => navigate(`/accounts/${conta.id}/edit`)}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="icon-btn delete-btn"
+                      title="Excluir conta"
+                      onClick={async () => {
+                        const confirmar = window.confirm(`Deseja realmente excluir a conta "${conta.name}"?`);
+                        if (!confirmar) return;
+
+                        try {
+                          const res = await fetch(`/api/accounts/${conta.id}`, { method: 'DELETE' });
+                          const data = await res.json();
+                          alert(data.message || 'Conta excluída');
+
+                          if (res.ok) {
+                            setContas((prev) => prev.filter((c) => c.id !== conta.id));
+                          }
+                        } catch (err) {
+                          alert('Erro ao excluir conta');
+                          console.error(err);
+                        }
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+
+                <div className="conta-details">
+                  R${conta.value} — vence em {conta.due_date?.slice(0, 10)}<br />
+                  
+                </div>
               </li>
             ))}
           </ul>
@@ -96,15 +130,10 @@ useEffect(() => {
             if (!confirmar) return;
 
             try {
-              const res = await fetch(`/api/groups/${grupo.id}`, {
-                method: 'DELETE'
-              });
-
+              const res = await fetch(`/api/groups/${grupo.id}`, { method: 'DELETE' });
               const data = await res.json();
               alert(data.message || 'Grupo excluído');
-              if (res.ok) {
-                navigate('/groups');
-              }
+              if (res.ok) navigate('/groups');
             } catch (err) {
               alert('Erro ao excluir grupo');
               console.error(err);

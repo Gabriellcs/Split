@@ -6,7 +6,7 @@ import MembrosInput from '../components/MembrosInput';
 function CreateGroup() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [membros, setMembros] = useState(['']);
+  const [membros, setMembros] = useState([]);
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ function CreateGroup() {
         />
         <MembrosInput membros={membros} setMembros={setMembros} />
 
-        <button type="submit">Criar Grupo</button>
+        <button type="submit">Criar Conta</button>
       </form>
       <p>{msg}</p>
     </div>

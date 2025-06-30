@@ -19,13 +19,11 @@ create(group, callback) {
     const groupId = result.insertId;
     console.log(`✅ Grupo criado com ID: ${groupId}`);
 
-    // Se houver membros
     if (group.membros && Array.isArray(group.membros)) {
       console.log('👥 Membros a serem salvos:', group.membros);
 
       const promises = group.membros.map((nome, index) => {
         console.log(`➡️ Salvando membro ${index + 1}:`, nome);
-
         return new Promise((resolve, reject) => {
           MemberModel.create(nome, groupId, (err, res) => {
             if (err) {
@@ -43,64 +41,82 @@ create(group, callback) {
         .then(() => {
           console.log('✅ Todos os membros foram salvos');
 
-          // Verifica se há contas
-          if (group.contas && Array.isArray(group.contas)) {
-            console.log('💸 Contas a serem salvas:', group.contas);
+if (group.contas && Array.isArray(group.contas)) {
+  console.log('💸 Contas a serem salvas:', group.contas);
 
-            const db = require('../config/db');
+  const contaPromises = group.contas.map((conta) => {
+    return new Promise((resolve, reject) => {
+      const contaSQL = 'INSERT INTO accounts (name, value, due_date, group_id) VALUES (?, ?, ?, ?)';
+      db.query(contaSQL, [conta.name, conta.value, conta.due_date, groupId], (err, resultConta) => {
+        if (err) {
+          console.error('❌ Erro ao salvar conta:', conta.name, err);
+          return reject(err);
+        }
 
-            const contaPromises = group.contas.map((conta) => {
-              return new Promise((resolve, reject) => {
-                const contaSQL = 'INSERT INTO accounts (name, value, due_date, group_id) VALUES (?, ?, ?, ?)';
-                db.query(contaSQL, [conta.name, conta.value, conta.due_date, groupId], (err, resultConta) => {
-                  if (err) {
-                    console.error('❌ Erro ao salvar conta:', conta.name, err);
-                    return reject(err);
-                  }
+        const contaId = resultConta.insertId;
 
-                  const contaId = resultConta.insertId;
+        // Relacionar membros à conta
+        if (Array.isArray(conta.members) && conta.members.length > 0) {
+          const placeholders = conta.members.map(() => '?').join(',');
+          const sql = `
+            SELECT id, name FROM members
+            WHERE group_id = ? AND name IN (${placeholders})
+          `;
+          const params = [groupId, ...conta.members];
 
-                  // Relacionar membros à conta
-                  if (conta.members && Array.isArray(conta.members)) {
-                    const memberQuery = 'SELECT id, name FROM members WHERE group_id = ? AND name IN (?)';
-                    db.query(memberQuery, [groupId, conta.members], (err, membrosEncontrados) => {
-                      if (err) return reject(err);
+          console.log('🔍 SQL:', sql);
+          console.log('📦 Parâmetros:', params);
 
-                      const valores = membrosEncontrados.map((m) => [contaId, m.id]);
-                      if (valores.length > 0) {
-                        const relacaoSQL = 'INSERT INTO account_members (account_id, member_id) VALUES ?';
-                        db.query(relacaoSQL, [valores], (err) => {
-                          if (err) return reject(err);
-                          resolve();
-                        });
-                      } else {
-                        resolve(); // Nenhum membro associado
-                      }
-                    });
-                  } else {
-                    resolve(); // Nenhum membro para associar
-                  }
-                });
+          db.query(sql, params, (err, membrosEncontrados) => {
+            if (err) {
+              console.error('❌ Erro ao buscar membros:', err);
+              return reject(err);
+            }
+
+            console.log('👤 Membros encontrados para associação:', membrosEncontrados);
+
+            const valores = membrosEncontrados.map((m) => [contaId, m.id]);
+            if (valores.length > 0) {
+              const relacaoSQL = 'INSERT INTO account_members (account_id, member_id) VALUES ?';
+              db.query(relacaoSQL, [valores], (err) => {
+                if (err) return reject(err);
+                console.log('🔗 Associação conta-membro salva:', valores);
+                resolve();
               });
-            });
+            } else {
+              console.log('⚠️ Nenhum membro correspondente encontrado para a conta:', conta.name);
+              resolve(); // Nenhum membro associado
+            }
+          });
+        } else {
+          console.log('ℹ️ Conta sem membros associados:', conta.name);
+          resolve(); // Nenhum membro para associar
+        }
+      });
+    });
+  });
 
-            Promise.all(contaPromises)
-              .then(() => {
-                console.log('✅ Contas e associações salvas');
-                callback(null, result);
-              })
-              .catch((err) => {
-                console.error('❌ Erro ao salvar contas:', err);
-                callback(err);
-              });
+  Promise.all(contaPromises)
+    .then(() => {
+      console.log('✅ Contas e associações salvas');
+      callback(null, result);
+    })
+    .catch((err) => {
+      console.error('❌ Erro ao salvar contas:', err);
+      callback(err);
+    });
 
-          } else {
-            console.log('ℹ️ Nenhuma conta informada');
-            callback(null, result);
-          }
+} else {
+  console.log('ℹ️ Nenhuma conta informada');
+  callback(null, result);
+}
+
+
         })
-        .catch(callback);
-
+        .catch((err) => {
+          console.error('❌ Erro ao salvar membros:', err);
+          callback(err);
+        });
     } else {
       console.log('ℹ️ Nenhum membro informado');
       callback(null, result);

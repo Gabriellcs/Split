@@ -9,8 +9,13 @@ import CreateGroup from './pages/CreateGroup';
 import GroupDetails from './pages/GroupDetails';
 import EditGroup from './pages/EditGroup';
 import CreateAccount from './pages/CreateAccount';
+import EditAccount from './pages/EditAccount';
+
+
 
 function App() {
+
+  
   return (
     <div>
       <Routes>
@@ -21,9 +26,13 @@ function App() {
         <Route path="/groups/create" element={<CreateGroup />} />
         <Route path="/groups/:id" element={<GroupDetails />} />
         <Route path="/groups/:id/edit" element={<EditGroup />} />
-        <Route path="/accounts/temp/new" element={<CreateAccount />} />
+        <Route path="/groups/:groupId/accounts/new" element={<CreateAccount />} />
+        <Route path="/accounts/:id/edit" element={<EditAccount />} />
       </Routes>
     </div>
+
+
+
   );
 }
 

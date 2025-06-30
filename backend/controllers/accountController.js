@@ -1,4 +1,5 @@
 const response = require('../utils/responseHelper');
+const db = require('../config/db'); // Importa a conexão com o banco
 
 class AccountController {
   constructor(accountService) {
@@ -23,6 +24,17 @@ class AccountController {
     });
   };
 
+  getById = (req, res) => {
+    const id = req.params.id;
+
+    this.accountService.getAccountById(id, (err, result) => {
+      if (err) return res.status(500).json({ message: 'Erro ao buscar conta' });
+      return res.status(200).json({ data: result });
+    });
+  };
+
+
+
   update = (req, res) => {
     const id = req.params.id;
     const account = req.body;
@@ -34,13 +46,18 @@ class AccountController {
   };
 
   delete = (req, res) => {
-    const id = req.params.id;
+    const accountId = req.params.id;
 
-    this.accountService.deleteAccount(id, (err) => {
-      if (err) return response.error(res, 'Erro ao excluir conta', 500);
-      return response.success(res, 'Conta excluída com sucesso');
+    const sql = 'DELETE FROM accounts WHERE id = ?';
+    db.query(sql, [accountId], (err, result) => {
+      if (err) {
+        console.error('Erro ao excluir conta:', err);
+        return res.status(500).json({ message: 'Erro ao excluir conta' });
+      }
+
+      return res.status(200).json({ message: 'Conta excluída com sucesso' });
     });
   };
-}
+} 
 
 module.exports = AccountController;

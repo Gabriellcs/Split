@@ -18,6 +18,11 @@ class AccountService {
   deleteAccount(id, callback) {
     this.accountRepository.delete(id, callback);
   }
+
+  getAccountById(id, callback) {
+  this.accountRepository.findById(id, callback);
+  }
+
 }
 
 module.exports = AccountService;

@@ -79,3 +79,57 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
+
+/* contadetails */
+
+.contas-list {
+  list-style: none;
+  padding: 0;
+}
+
+.conta-item {
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ddd;
+}
+
+.conta-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.conta-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: #eee;
+}
+
+.edit-btn {
+  color: #2a7ae2; /* azul */
+}
+
+.delete-btn {
+  color: #d93025; /* vermelho */
+}
+
+.conta-details {
+  margin-left: 4px;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 2px;
+}
