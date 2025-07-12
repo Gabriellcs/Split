@@ -7,9 +7,9 @@ class AccountService {
     this.accountRepository.create(account, callback);
   }
 
-  getAccountsByGroup(groupId, callback) {
-    this.accountRepository.findByGroupId(groupId, callback);
-  }
+getAccountsByGroup(groupId, callback) {
+  this.accountRepository.findByGroup(groupId, callback);
+}
 
   updateAccount(id, account, callback) {
     this.accountRepository.update(id, account, callback);

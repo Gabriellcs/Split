@@ -20,9 +20,23 @@ class MySQLAccountRepository extends AccountRepository {
     AccountModel.delete(id, callback);
   }
 
-  findById(id, callback) {
+findByGroup(groupId, callback) {
   const sql = `
-    SELECT a.*, GROUP_CONCAT(m.name SEPARATOR ', ') AS members
+SELECT a.*, a.divisao_manual
+FROM accounts a
+WHERE a.group_id = ?;
+  `;
+  db.query(sql, [groupId], (err, results) => {
+    console.log('🗃️ Resultados da query findByGroup:', results);
+    callback(err, results);
+  });
+}
+
+
+
+findById(id, callback) {
+  const sql = `
+    SELECT a.*, a.divisao_manual, GROUP_CONCAT(m.name SEPARATOR ', ') AS members
     FROM accounts a
     LEFT JOIN account_members am ON a.id = am.account_id
     LEFT JOIN members m ON am.member_id = m.id
@@ -31,6 +45,7 @@ class MySQLAccountRepository extends AccountRepository {
   `;
   db.query(sql, [id], callback);
 }
+
 
 }
 

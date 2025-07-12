@@ -22,5 +22,7 @@ router.get('/group/:groupId', accountController.getByGroup);
 router.put('/:id', accountController.update);
 router.delete('/:id', accountController.delete);
 router.get('/:id', accountController.getById);
+router.put('/:id/split', accountController.updateSplit);
+
 
 module.exports = router;

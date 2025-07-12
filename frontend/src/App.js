@@ -10,6 +10,7 @@ import GroupDetails from './pages/GroupDetails';
 import EditGroup from './pages/EditGroup';
 import CreateAccount from './pages/CreateAccount';
 import EditAccount from './pages/EditAccount';
+import SplitAccount from './pages/SplitAccount';
 
 
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/groups/:id/edit" element={<EditGroup />} />
         <Route path="/groups/:groupId/accounts/new" element={<CreateAccount />} />
         <Route path="/accounts/:id/edit" element={<EditAccount />} />
+        <Route path="/accounts/:id/split" element={<SplitAccount />} />
       </Routes>
     </div>
 
