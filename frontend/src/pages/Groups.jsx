@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Groups.css';
 
 function Groups() {
   const [grupos, setGrupos] = useState([]);
   const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGrupos = async () => {
@@ -39,6 +40,14 @@ function Groups() {
           ))}
         </ul>
       )}
+
+      {/* ✅ Botão para voltar à tela inicial */}
+      <button
+        onClick={() => navigate('/Home')}
+        className="back-home-groups-btn"
+      >
+        ← Voltar para Início
+      </button>
     </div>
   );
 }

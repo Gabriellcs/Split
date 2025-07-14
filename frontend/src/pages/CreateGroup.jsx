@@ -45,23 +45,42 @@ function CreateGroup() {
     <div className="create-group-container">
       <h2>Criar Novo Grupo</h2>
       <form onSubmit={handleSubmit} className="create-group-form">
-        <input
-          type="text"
-          placeholder="Nome do grupo"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Descrição (opcional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <div className="membros-container">
+          <label>Nome do grupo:</label>
+          <input
+            type="text"
+            placeholder="Ex: Contas da casa, Viagem com amigos..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <label>Descrição (opcional):</label>
+          <textarea
+            placeholder="Descreva brevemente o objetivo do grupo"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
         <MembrosInput membros={membros} setMembros={setMembros} />
 
         <button type="submit">Criar Conta</button>
       </form>
-      <p>{msg}</p>
+      
+      {msg && (
+        <p className={`feedback-msg ${msg.toLowerCase().includes('erro') ? 'feedback-error' : 'feedback-success'}`}>
+          {msg}
+        </p>
+      )}
+
+
+      <button
+        onClick={() => navigate('/Home')}
+        className="home-create-btn"
+      >
+        ← Voltar para Início
+      </button>
+
     </div>
   );
 }

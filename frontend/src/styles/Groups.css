@@ -31,3 +31,17 @@
 .view-button:hover {
   background-color: #0056b3;
 }
+
+.back-home-groups-btn {
+  margin-top: 20px;
+  background-color: #007bff;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-home-groups-btn:hover {
+  background-color: #0056b3;
+}

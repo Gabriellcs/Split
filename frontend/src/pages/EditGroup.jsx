@@ -89,7 +89,14 @@ const handleSubmit = async (e) => {
 
         <button type="submit">Salvar Alterações</button>
       </form>
-      <p>{msg}</p>
+      
+      {msg && (
+        <p className={`feedback-msg ${msg.toLowerCase().includes('erro') ? 'feedback-error' : 'feedback-success'}`}>
+          {msg}
+        </p>
+      )}
+
+
     </div>
   );
 }

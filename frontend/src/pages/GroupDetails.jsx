@@ -5,20 +5,28 @@ import '../styles/GroupDetails.css';
 const CustomModal = ({ message, onConfirm, onCancel, type }) => {
   if (!message) return null;
 
+  const isConfirm = type === 'confirm';
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <p>{message}</p>
         <div className="modal-actions">
-          {type === 'confirm' && (
+          {isConfirm && (
             <button onClick={onConfirm} className="modal-btn confirm-btn">Sim</button>
           )}
-          <button onClick={onCancel} className="modal-btn cancel-btn">Não</button>
+          <button
+            onClick={onCancel}
+            className="modal-btn cancel-btn"
+          >
+            {isConfirm ? 'Não' : 'Fechar'}
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
 
 function App() {
   const { id } = useParams();
@@ -101,17 +109,60 @@ function App() {
       <h2 className="group-title">{grupo.name}</h2>
       <p className="group-description"><strong>Descrição:</strong> {grupo.description || 'Sem descrição'}</p>
 
-      <h3 className="section-title">Membros</h3>
-      <ul className="membros-list">
-        {membros.length > 0 ? (
-          membros.map((membro, idx) => <li key={idx}>{membro.name}</li>)
-        ) : (
-          <p className="placeholder-text">Nenhum membro cadastrado.</p>
-        )}
-      </ul>
+    <h3 className="section-title">Membros</h3>
+    <ul className="membros-list">
+      {membros.length > 0 ? (
+        membros.map((membro, idx) => <li key={idx}>{membro.name}</li>)
+      ) : (
+        <p className="placeholder-text">Nenhum membro cadastrado.</p>
+      )}
+    </ul>
+
+    {/* ✅ Botões de ação do grupo */}
+    <div className="group-buttons group-top-buttons">
+      <button
+        className="group-action-btn add"
+        onClick={() => navigate(`/groups/${grupo.id}/accounts/new`)}
+      >
+        ➕ Nova Conta
+      </button>
+
+      <button
+        className="group-action-btn edit"
+        onClick={() => navigate(`/groups/${grupo.id}/edit`)}
+      >
+        ✏️ Editar Grupo
+      </button>
+
+      <button
+        className="group-action-btn delete"
+        onClick={() =>
+          showModal(
+            'Tem certeza que deseja excluir este grupo?',
+            'confirm',
+            async () => {
+              setModal({ message: '' });
+              try {
+                const res = await fetch(`/api/groups/${grupo.id}`, { method: 'DELETE' });
+                const data = await res.json();
+                showModal(data.message || 'Grupo excluído', 'alert');
+                if (res.ok) navigate('/groups');
+              } catch (err) {
+                showModal('Erro ao excluir grupo', 'alert');
+                console.error(err);
+              }
+            },
+            () => setModal({ message: '' })
+          )
+        }
+      >
+        🗑️ Excluir Grupo
+      </button>
+    </div>
+
 
       <div className="contas-section">
-        <h3 className="section-title">💸 Contas do Grupo</h3>
+        <h3 className="section-title">Contas do Grupo</h3>
         {contas.length === 0 ? (
           <p className="placeholder-text">Nenhuma conta cadastrada.</p>
         ) : (
@@ -136,25 +187,25 @@ function App() {
                 <div className="conta-actions flex space-x-2 mt-2 sm:mt-0">
                   {/* Botão Editar Conta */}
                   <button
-                    className="icon-btn bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-md transition duration-300"
+
                     title="Editar conta"
                     onClick={() => navigate(`/accounts/${conta.id}/edit`)}
                   >
-                    ✏️
+                    ✏️ Editar Conta
                   </button>
 
                   {/* Botão Editar Divisão */}
                   <button
-                    className="icon-btn bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full shadow-md transition duration-300"
+  
                     title="Editar divisão"
                     onClick={() => navigate(`/accounts/${conta.id}/split`)}
                   >
-                    🧮
+                    🧮 Editar Divisão da Conta
                   </button>
 
                   {/* Botão Excluir Conta */}
                   <button
-                    className="icon-btn bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-md transition duration-300"
+
                     title="Excluir conta"
                     onClick={() => showModal(
                       `Deseja realmente excluir a conta "${conta.name}"?`,
@@ -177,7 +228,7 @@ function App() {
                       () => setModal({ message: '' })
                     )}
                   >
-                    🗑️
+                    🗑️ Excluir Conta
                   </button>
                 </div>
               </li>
@@ -187,30 +238,6 @@ function App() {
  
 
         )}
-      </div>
-
-      <div className="group-buttons">
-        <button className="edit-group-btn" onClick={() => navigate(`/groups/${grupo.id}/edit`)}>✏️ Editar Grupo</button>
-        <button
-          className="delete-group-btn"
-          onClick={() => showModal(
-            'Tem certeza que deseja excluir este grupo?',
-            'confirm',
-            async () => {
-              setModal({ message: '' });
-              try {
-                const res = await fetch(`/api/groups/${grupo.id}`, { method: 'DELETE' });
-                const data = await res.json();
-                showModal(data.message || 'Grupo excluído', 'alert');
-                if (res.ok) navigate('/groups');
-              } catch (err) {
-                showModal('Erro ao excluir grupo', 'alert');
-                console.error(err);
-              }
-            },
-            () => setModal({ message: '' })
-          )}
-        >🗑️ Excluir Grupo</button>
       </div>
 
       <button className="back-button" onClick={() => navigate('/groups')}>

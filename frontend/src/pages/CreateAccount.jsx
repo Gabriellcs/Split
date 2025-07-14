@@ -19,14 +19,30 @@ function CreateAccount() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const novaConta = {
-      name,
-      value: parseFloat(value),
-      due_date: dueDate,
-      group_id: parseInt(groupId)
-    };
+      // 🔒 Validação de valor
+  if (!value || parseFloat(value) <= 0) {
+    setMsg('Erro, o valor deve ser maior que zero.');
+    return;
+  }
 
-    try {
+  // 🔒 Validação de data
+  const hoje = new Date();
+  const dataVencimento = new Date(dueDate);
+
+  if (!dueDate || dataVencimento < new Date(hoje.toDateString())) {
+    setMsg('Erro, a data de vencimento deve ser hoje ou uma data futura.');
+    return;
+  }
+
+
+  const novaConta = {
+    name,
+    value: parseFloat(value),
+    due_date: dueDate,
+    group_id: parseInt(groupId)
+  };
+
+  try {
       const res = await fetch('/api/accounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,7 +106,7 @@ function CreateAccount() {
       })
       .catch(err => {
         console.error('❌ Erro no OCR:', err);
-        setMsg('Erro ao processar imagem');
+        setMsg('Erro ao processar documento');
       });
   };
 
@@ -134,7 +150,7 @@ function CreateAccount() {
     if (nomeDetectado || valorDetectado || vencDetectado) {
       setMsg('Informações preenchidas automaticamente 🎉');
     } else {
-      setMsg('Não foi possível identificar os dados automaticamente');
+      setMsg('Erro, não foi possível identificar os dados automaticamente');
     }
   };
 
@@ -151,27 +167,32 @@ function CreateAccount() {
 
   return (
     <div className="create-group-container">
-      <h2>Nova Conta</h2>
+      <h2>Nova Conta Financeira</h2>
       <form onSubmit={handleSubmit} className="create-group-form">
-        <input
-          type="text"
-          placeholder="Nome da conta"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Valor"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
+        <div className="membros-container">
+          <label>Nome da Conta:</label>
+          <input
+            type="text"
+            placeholder="Ex: Conta de Luz, Água... "
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <label>Valor da Conta:</label>
+          <input
+            type="number"
+            placeholder="Preço total da sua conta"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            required
+          />
+          <label>Data de vencimento:</label>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+        </div>
 
         <div>
           <p><strong>Ou envie uma imagem ou PDF:</strong></p>
@@ -185,7 +206,12 @@ function CreateAccount() {
         <button type="submit" style={{ marginTop: '15px' }}>Salvar Conta</button>
         
       </form>
-      <p>{msg}</p>
+      {msg && (
+        <p className={`feedback-msg ${msg.toLowerCase().includes('erro') ? 'feedback-error' : 'feedback-success'}`}>
+          {msg}
+        </p>
+      )}
+
     </div>
   );
   

@@ -32,7 +32,7 @@ export default function MembrosInput({ membros, setMembros }) {
       <input
         type="text"
         value={input}
-        placeholder="Digite o nome e pressione Enter"
+        placeholder="Digite o nome e pressione Adicionar"
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && adicionarMembro()}
       />
