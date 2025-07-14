@@ -28,6 +28,10 @@
   background-color: #28a745;
 }
 
+.home-btn.red {
+  background-color: red;
+}
+
 .home-btn:hover {
   opacity: 0.9;
 }

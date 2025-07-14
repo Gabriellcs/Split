@@ -137,6 +137,7 @@ function SplitAccount() {
             <label>Valor:</label>
             <input
               type="number"
+              min="0"
               value={valores[m.name] || ''}
               onChange={(e) => handleChange(m.name, e.target.value)}
               placeholder="Valor a ser pago por este membro"

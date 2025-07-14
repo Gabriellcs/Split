@@ -16,6 +16,10 @@ function Home() {
         <Link to="/groups/create">
           <button className="home-btn green">Criar Grupo</button>
         </Link>
+
+        <Link to="/">
+          <button className="home-btn red">Sair</button>
+        </Link>
       </div>
     </div>
   );
